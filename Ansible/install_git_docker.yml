@@ -1,0 +1,35 @@
+- name: Instalación de Docker y Git
+  hosts: all
+  become: yes
+  tasks:
+    - name: Instalar dependencias para Docker
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg-agent
+          - software-properties-common
+      when: ansible_os_family == 'Debian'
+
+    - name: Agregar clave GPG oficial de Docker
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+      when: ansible_os_family == 'Debian'
+
+    - name: Agregar repositorio de Docker
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
+        state: present
+      when: ansible_os_family == 'Debian'
+
+    - name: Instalar Docker
+      apt:
+        name: docker-ce
+        state: present
+      when: ansible_os_family == 'Debian'
+
+    - name: Instalar Git
+      apt:
+        name: git
+        state: present
